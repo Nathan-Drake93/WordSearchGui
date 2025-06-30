@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="657.0" style="-fx-background-color: White;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="WordSearch.GuiHandle">
+    <children>
+        <ImageView fitHeight="214.0" fitWidth="228.0" layoutX="438.0" layoutY="187.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../img/CraftyGeoLogo.png" />
+            </image>
+        </ImageView>
+        <Button fx:id="createButton" layoutX="378.0" layoutY="187.0" mnemonicParsing="false" onAction="#onCreatePuzzleClick" text="Create Puzzle" />
+        <HBox alignment="CENTER_LEFT" layoutX="378.0" layoutY="13.0" prefHeight="36.0" prefWidth="246.0" spacing="20.0">
+            <children>
+                <Button fx:id="newFile" mnemonicParsing="false" onAction="#newFile" text="New File" />
+                <Button fx:id="editFile" mnemonicParsing="false" onAction="#editFile" text="Edit File" />
+                <Button fx:id="openFile" alignment="CENTER" mnemonicParsing="false" onAction="#openFile" text="Open File" />
+            </children>
+        </HBox>
+        <Label layoutX="300.0" layoutY="99.0" text="File Location" />
+        <Label layoutX="300.0" layoutY="66.0" text="Grid Size" />
+        <HBox alignment="CENTER_LEFT" layoutX="378.0" layoutY="57.0" prefHeight="36.0" prefWidth="119.0" spacing="10.0">
+            <children>
+                <TextField fx:id="rowsNum" prefHeight="25.0" prefWidth="39.0" />
+                <Label text="X" />
+                <TextField fx:id="colsNum" prefHeight="25.0" prefWidth="39.0" />
+            </children>
+        </HBox>
+        <TextArea fx:id="wordsText" layoutX="29.0" layoutY="37.0" onKeyTyped="#typedWords" prefHeight="325.0" prefWidth="228.0" promptText="Input Words Here" AnchorPane.leftAnchor="29.0" AnchorPane.topAnchor="37.0" />
+        <Label layoutX="76.0" layoutY="14.0" text="Word Search Words" AnchorPane.leftAnchor="76.0" AnchorPane.topAnchor="14.0" />
+        <Label fx:id="counter" layoutX="29.0" layoutY="368.0" text="Counter" />
+        <Label layoutX="299.0" layoutY="134.0" text="Puzzle Name" />
+        <TextField fx:id="sheetName" layoutX="378.0" layoutY="130.0" prefHeight="25.0" prefWidth="188.0" />
+        <TextField fx:id="fileLocationText" editable="false" layoutX="378.0" layoutY="95.0" prefHeight="25.0" prefWidth="258.0" />
+    </children>
+</AnchorPane>
