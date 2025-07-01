@@ -15,9 +15,8 @@ public class CreatePuzzle {
         }
         Collections.sort(solution);
 
-
-
         char[][] puzzle;
+        PuzzleGenerator.generateWordSearch(puzzle, words);
 
         return puzzle;
     }

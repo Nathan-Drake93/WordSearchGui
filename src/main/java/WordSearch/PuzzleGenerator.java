@@ -1,5 +1,6 @@
 package WordSearch;
 
+import javafx.scene.control.Alert;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,36 +32,37 @@ public class PuzzleGenerator {
     public static Random RNG = new Random();
 
 
-    public static char[][] generateWordSearch(ArrayList<String> words, int rows, int cols){
-        char[][] puzzle = new char[rows][cols];
+    public static boolean generateWordSearch(char[][] puzzle, ArrayList<String> words){
 
         for(String word : words){
             for (int tries = 0; tries < MaxTries; tries++){
                 int row = RNG.nextInt(puzzle.length);
                 int col = RNG.nextInt(puzzle[0].length);
-                if (!placeWord(puzzle, word, row, col)){
-                    if (tries == MaxTries - 1){
-                        System.out.println("Not able to place " + word + " into the puzzle");
-                    }
+
+                if (placeWord(puzzle, word, row, col)){
+                    break;
                 }
-                else break;
+                else if (tries == MaxTries - 1){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Placement Error");
+                    alert.setContentText("A word was mot able to be placed.\n" +
+                            "Please try using a larger grid.");
+                    alert.showAndWait();
+
+                    return false;
+                }
             }
         }
 
-        return puzzle;
+        return true;
     }
 
-    public static char[][] generateWordSearch(ArrayList<String> words){
-
-        return null;
-    }
-
-    public static boolean placeWord(char[][] puzzle, String word, int row, int col){
-        ArrayList<DIRS> directions = new ArrayList<DIRS>(List.of(DIRS.values()));
+    private static boolean placeWord(char[][] puzzle, String word, int row, int col){
+        ArrayList<DIRS> directions = new ArrayList<>(List.of(DIRS.values()));
         Collections.shuffle(directions,RNG);
 
         for (DIRS direction : directions){
-            if (checkPlacement()){
+            if (checkPlacement(puzzle, word, row, col, direction)){
                 for (int i = 0; i < word.length(); i++){
                     puzzle[row + i * direction.dy][col + i * direction.getDx()] = word.charAt(i);
                 }
@@ -71,7 +73,21 @@ public class PuzzleGenerator {
         return false;
     }
 
-    public static boolean checkPlacement(){
+    // This method checks whether the placement of a word given the direction of placement will be valid in the puzzle grid.
+    private static boolean checkPlacement(char[][] puzzle, String word, int row, int col, DIRS dir){
+
+        for (int i = 0; i < word.length(); i++){
+            int newRow = row + i * dir.getDy();
+            int newCol = col + i * dir.getDx();
+            // returns false if placing cell is out of bounds
+            if (newRow < 0 || newCol < 0 || newRow >= puzzle.length || newCol >= puzzle[0].length){
+                return false;
+            }
+            // returns false if puzzle cell is not empty and the new letter doesn't match the one in the puzzle cell
+            if (word.charAt(i) != puzzle[newRow][newCol] && puzzle[newRow][newCol] != 0){
+                return false;
+            }
+        }
         return true;
     }
 
