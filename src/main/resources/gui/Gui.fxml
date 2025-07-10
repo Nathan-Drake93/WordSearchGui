@@ -14,9 +14,9 @@
         <Button fx:id="createButton" layoutX="378.0" layoutY="187.0" mnemonicParsing="false" onAction="#onCreatePuzzleClick" text="Create Puzzle" />
         <HBox alignment="CENTER_LEFT" layoutX="378.0" layoutY="13.0" prefHeight="36.0" prefWidth="246.0" spacing="20.0">
             <children>
-                <Button fx:id="newFile" mnemonicParsing="false" onAction="#newFile" text="New File" />
-                <Button fx:id="editFile" mnemonicParsing="false" onAction="#editFile" text="Edit File" />
-                <Button fx:id="openFile" alignment="CENTER" mnemonicParsing="false" onAction="#openFile" text="Open File" />
+                <Button fx:id="newFile" mnemonicParsing="false" onAction="#newFileClick" text="New File" />
+                <Button fx:id="editFile" mnemonicParsing="false" onAction="#editFileClick" text="Edit File" />
+                <Button fx:id="openFile" alignment="CENTER" mnemonicParsing="false" onAction="#openFileClick" text="Open File" />
             </children>
         </HBox>
         <Label layoutX="300.0" layoutY="99.0" text="File Location" />

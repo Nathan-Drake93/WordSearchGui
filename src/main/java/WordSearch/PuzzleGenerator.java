@@ -1,10 +1,7 @@
 package WordSearch;
 
-import javafx.scene.control.Alert;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.function.Supplier;
 
 public class PuzzleGenerator {
 
@@ -32,7 +29,31 @@ public class PuzzleGenerator {
     public static Random RNG = new Random();
 
 
-    public static boolean generateWordSearch(char[][] puzzle, ArrayList<String> words){
+    // this method
+    public static Optional<char[][]> makePuzzle(ArrayList<String> solution, String rows, String cols, Supplier<Boolean> confirmAutoSize){
+        ArrayList<String> words = new ArrayList<>();
+        for (String s : solution){
+            String r = s.replaceAll(" ", "");
+            words.add(r);
+        }
+        Collections.sort(solution);
+        words.sort(Comparator.comparingInt(String::length).reversed());
+
+
+        Optional<int[]> gridTry = GridHandling.gridSet(words, rows, cols, confirmAutoSize);
+        if (gridTry.isEmpty()){
+            return Optional.empty();
+        }
+        int[] grid = gridTry.get();
+
+        char[][] puzzle = new char[grid[0]][grid[1]];
+        if (PuzzleGenerator.generateWordSearch(puzzle, words)){
+            return Optional.of(puzzle);
+        }
+        else return Optional.empty();
+    }
+
+    private static boolean generateWordSearch(char[][] puzzle, ArrayList<String> words){
 
         for(String word : words){
             for (int tries = 0; tries < MaxTries; tries++){
@@ -43,12 +64,6 @@ public class PuzzleGenerator {
                     break;
                 }
                 else if (tries == MaxTries - 1){
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Placement Error");
-                    alert.setContentText("A word was mot able to be placed.\n" +
-                            "Please try using a larger grid.");
-                    alert.showAndWait();
-
                     return false;
                 }
             }
@@ -79,11 +94,11 @@ public class PuzzleGenerator {
         for (int i = 0; i < word.length(); i++){
             int newRow = row + i * dir.getDy();
             int newCol = col + i * dir.getDx();
-            // returns false if placing cell is out of bounds
+
             if (newRow < 0 || newCol < 0 || newRow >= puzzle.length || newCol >= puzzle[0].length){
                 return false;
             }
-            // returns false if puzzle cell is not empty and the new letter doesn't match the one in the puzzle cell
+
             if (word.charAt(i) != puzzle[newRow][newCol] && puzzle[newRow][newCol] != 0){
                 return false;
             }
