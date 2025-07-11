@@ -23,9 +23,9 @@
         <Label layoutX="300.0" layoutY="66.0" text="Grid Size" />
         <HBox alignment="CENTER_LEFT" layoutX="378.0" layoutY="57.0" prefHeight="36.0" prefWidth="119.0" spacing="10.0">
             <children>
-                <TextField fx:id="rowsNum" prefHeight="25.0" prefWidth="39.0" />
+                <TextField fx:id="rowsNum" onKeyTyped="#liveGridCheck" prefHeight="25.0" prefWidth="39.0" />
                 <Label text="X" />
-                <TextField fx:id="colsNum" prefHeight="25.0" prefWidth="39.0" />
+                <TextField fx:id="colsNum" onKeyTyped="#liveGridCheck" prefHeight="25.0" prefWidth="39.0" />
             </children>
         </HBox>
         <TextArea fx:id="wordsText" layoutX="29.0" layoutY="37.0" onKeyTyped="#typedWords" prefHeight="325.0" prefWidth="228.0" promptText="Input Words Here" AnchorPane.leftAnchor="29.0" AnchorPane.topAnchor="37.0" />

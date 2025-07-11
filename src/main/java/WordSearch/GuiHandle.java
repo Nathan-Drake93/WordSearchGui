@@ -1,5 +1,6 @@
 package WordSearch;
 
+import javafx.beans.value.ObservableStringValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -43,8 +44,12 @@ public class GuiHandle {
     }
 
     @FXML
-    private void gridSizeCheck(){
+    private void liveGridCheck(){
+        boolean rowsValid = rowsNum.getText().matches("\\d*") || rowsNum.getText().isBlank();
+        boolean colsValid = colsNum.getText().matches("\\d*") || colsNum.getText().isBlank();
 
+        rowsNum.setStyle(rowsValid ? null : "-fx-border-color: red; -fx-border-width: 2;");
+        colsNum.setStyle(colsValid ? null : "-fx-border-color: red; -fx-border-width: 2;");
     }
 
     @FXML
@@ -138,7 +143,9 @@ public class GuiHandle {
     }
 
     public static boolean fixGridInputYN(){
-        return showConfirmation("Grid Size Error", "The inputted grid size is invalid.\nOnly integers and blank entries are permitted.\n" +
-                "Would you like to use auto sizing instead?");
+        return showConfirmation("Grid Size Input Error", """
+                The inputted grid size is invalid.
+                Only integers and blank entries are permitted.
+                Would you like to use auto sizing instead?""");
     }
 }
