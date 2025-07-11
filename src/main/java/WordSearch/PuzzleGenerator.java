@@ -6,7 +6,7 @@ import java.util.function.Supplier;
 public class PuzzleGenerator {
 
     public enum DIRS{
-        East(1, 0), South(0, 1), SouthEast(1, 1), NorthEast(1, -1), West(-1, 0), North(0, -1), NorthWest(-1, -1), SouthWest(-1, 1);
+        East(1, 0), South(0, -1), SouthEast(1, -1), NorthEast(1, 1), West(-1, 0), North(0, 1), NorthWest(-1, 1), SouthWest(-1, -1);
 
         private final int dx;
         private final int dy;
@@ -55,21 +55,32 @@ public class PuzzleGenerator {
 
     private static boolean generateWordSearch(char[][] puzzle, ArrayList<String> words){
 
-        for(String word : words){
-            for (int tries = 0; tries < MaxTries; tries++){
-                int row = RNG.nextInt(puzzle.length);
-                int col = RNG.nextInt(puzzle[0].length);
+        for (int firstTry = 0; firstTry < MaxTries; firstTry++){
+            char[][] puzzleTry = new char[puzzle.length][puzzle[0].length];
+            boolean placed = false;
+            for(String word : words){
+                placed = false;
+                for (int tries = 0; tries < MaxTries; tries++){
+                    int row = RNG.nextInt(puzzleTry.length);
+                    int col = RNG.nextInt(puzzleTry[0].length);
 
-                if (placeWord(puzzle, word, row, col)){
-                    break;
+                    if (placeWord(puzzleTry, word, row, col)){
+                        placed = true;
+                        break;
+                    }
                 }
-                else if (tries == MaxTries - 1){
-                    return false;
+                if (word.equals(words.getLast()) && placed){
+                    for (int row = 0; row < puzzleTry.length; row++){
+                        System.arraycopy(puzzleTry[row], 0, puzzle[row], 0, puzzle[row].length);
+                    }
+                    return true;
+                }
+                if (!placed){
+                    break;
                 }
             }
         }
-
-        return true;
+        return false;
     }
 
     private static boolean placeWord(char[][] puzzle, String word, int row, int col){
