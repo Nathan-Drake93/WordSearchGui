@@ -32,7 +32,6 @@ public class Excel {
 //        String date = PuzzleUtil.puzzleDate();
         File file = new File(fileName);
 
-//        File file = new File("C:\\Users\\natha\\OneDrive\\Documents\\Britt Business\\OurTownMagazine", "WordSearchesGen.xlsx");
         XSSFWorkbook workbook = null;
         if (file.exists()) {
         try {
