@@ -29,7 +29,6 @@ public class PuzzleGenerator {
     public static Random RNG = new Random();
 
 
-    // this method
     public static Optional<char[][]> makePuzzle(ArrayList<String> solution, String rows, String cols, Supplier<Boolean> confirmAutoSize){
         ArrayList<String> words = new ArrayList<>();
         for (String s : solution){
@@ -70,9 +69,7 @@ public class PuzzleGenerator {
                     }
                 }
                 if (word.equals(words.getLast()) && placed){
-                    for (int row = 0; row < puzzleTry.length; row++){
-                        System.arraycopy(puzzleTry[row], 0, puzzle[row], 0, puzzle[row].length);
-                    }
+                    copyGrid(puzzleTry, puzzle);
                     return true;
                 }
                 if (!placed){
@@ -115,6 +112,30 @@ public class PuzzleGenerator {
             }
         }
         return true;
+    }
+
+    public static void fillGrid(char[][] puzzle){
+        for (int row = 0; row < puzzle.length; row++){
+            for (int col = 0; col < puzzle[0].length; col++){
+                if (puzzle[row][col] == '\0'){
+                    puzzle[row][col] = (char)('A' + RNG.nextInt(26));
+                }
+            }
+        }
+    }
+
+    public static void copyGrid(char[][] source, char[][] dest){
+        for (int row = 0; row < source.length; row++) {
+            System.arraycopy(source[row], 0, dest[row], 0, dest[row].length);
+        }
+    }
+    public static char[][] copyGrid(char[][] source){
+        char[][] dest = new char[source.length][source[0].length];
+        for (int row = 0; row < source.length; row++) {
+            System.arraycopy(source[row], 0, dest[row], 0, dest[row].length);
+        }
+
+        return dest;
     }
 
 }

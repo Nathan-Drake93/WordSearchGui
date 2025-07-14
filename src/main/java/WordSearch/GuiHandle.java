@@ -1,10 +1,11 @@
 package WordSearch;
 
-import javafx.beans.value.ObservableStringValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Window;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
@@ -35,7 +36,11 @@ public class GuiHandle {
     @FXML
     private Button editFile;
 
-    // gui word counter
+    private Window getWindow(){
+        return anchorPane.getScene().getWindow();
+    }
+
+    // live gui word counter
     @FXML
     private void typedWords(){
         ObservableList<CharSequence> words = wordsText.getParagraphs();
@@ -43,6 +48,7 @@ public class GuiHandle {
         counter.setText("Words: " + count);
     }
 
+    // row/column valid input live check
     @FXML
     private void liveGridCheck(){
         boolean rowsValid = rowsNum.getText().matches("\\d*") || rowsNum.getText().isBlank();
@@ -52,10 +58,11 @@ public class GuiHandle {
         colsNum.setStyle(colsValid ? null : "-fx-border-color: red; -fx-border-width: 2;");
     }
 
+    // puzzle creation block
     @FXML
     private void onCreatePuzzleClick(){
         if (!wordsText.getText().matches("[a-zA-Z]+")){
-            nonAlphabetDetectedError();
+            DialogService.nonAlphabetDetectedError();
             return;
         }
         ArrayList<String> words = new ArrayList<>();
@@ -65,87 +72,96 @@ public class GuiHandle {
         }
 
         if (!GridHandling.validGridInput(rowsNum.getText(), colsNum.getText())){
-            if (fixGridInputYN()){
+            if (DialogService.fixGridInputYN()){
                 return;
             }
         }
 
-        Optional<char[][]> result = PuzzleGenerator.makePuzzle(words, rowsNum.getText(), colsNum.getText(), GuiHandle::autoSizeYN);
+        Optional<char[][]> puzzleTry = PuzzleGenerator.makePuzzle(words, rowsNum.getText(), colsNum.getText(), DialogService::autoSizeYN);
 
-        if (result.isEmpty()){
-            placeError();
+        if (puzzleTry.isEmpty()){
+            DialogService.placeError();
             return;
         }
-        char[][] puzzle = result.get();
 
-    }
+        char[][] puzzle = puzzleTry.get();
+        char[][] solution = PuzzleGenerator.copyGrid(puzzle);
+        PuzzleGenerator.fillGrid(puzzle);
 
-    @FXML
-    private void newFileClick(){
-        return;
-    }
+        words.sort(null);
+        Optional<Boolean> saveTry = FileHandling.saveFile(fileLocationText.getText(), puzzle, solution, words);
+        if (saveTry.isPresent()){
+            boolean error = saveTry.get();
+            if (error){
+                DialogService.fileNotFoundError(fileLocationText.getText());
+            }
+            else{
+                DialogService.excelFormatError();
+            }
+        }
+        else{
+            DialogService.saveSuccess();
+        }
 
-    @FXML
-    private void openFileClick(){
-        return;
-    }
-
-    @FXML
-    private void editFileClick(){
-        return;
     }
 
     private static boolean enoughWords(ArrayList<String> words){
         if (words.size() < 5){
-            enoughWordsError();
+            DialogService.enoughWordsError();
             return false;
         }
         else if (words.getLast().isBlank() && words.size() - 2 < 5) {
-            enoughWordsError();
+            DialogService.enoughWordsError();
             return false;
         }
         return true;
     }
 
-    private static void showError(String title, String message){
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-    
-    private static void enoughWordsError(){
-        showError("Word List Error", "The number of words in the words list must be at least 5.");
-    }
+    // File Handling Block
+    @FXML
+    private void newFileClick(){
+        Optional<String> tryDirectory = DialogService.directoryPicker(getWindow());
+        if (tryDirectory.isEmpty()){
+            DialogService.directoryNotFoundError(" ");
+            return;
+        }
+        String directoryPath = tryDirectory.get();
 
-    private static void nonAlphabetDetectedError(){
-        showError("Non Alphabetic Error", "Words can only contain alphabetic letters.\nNumbers, punctuations, and symbols are not allowed");
-    }
+        Optional<String> tryFileName = DialogService.newFileName();
+        if (tryFileName.isEmpty()){
+            return;
+        }
+        String fileName = tryFileName.get();
 
-    private static void placeError(){
-        showError("Placement Error", "A word was not able to be placed.\nPlease try using a larger grid.");
-    }
+        if (!FileHandling.newFile(fileName, directoryPath)){
+            return;
+        }
 
-    private static boolean showConfirmation(String title, String message){
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(title);
-        alert.setContentText(message);
-        ButtonType yesButton = new ButtonType("Yes");
-        ButtonType noButton = new ButtonType("No");
-        alert.getButtonTypes().setAll(yesButton, noButton);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        return result.isPresent() && result.get() == yesButton;
+        fileLocationText.setText(directoryPath + "\\" + fileName);
     }
 
-    public static boolean autoSizeYN(){
-        return showConfirmation("Grid Size Error", "The grid size is too small.\n Would you like to switch to auto sizing?");
+    @FXML
+    private void openFileClick(){
+        Optional<String> tryFile = DialogService.filePicker(getWindow());
+        if (tryFile.isEmpty()){
+            DialogService.fileNotFoundError(" ");
+            return;
+        }
+        String filePath = tryFile.get();
+
+        if (!FileHandling.openFile(filePath)){
+            DialogService.fileNotFoundError(filePath);
+        }
     }
 
-    public static boolean fixGridInputYN(){
-        return showConfirmation("Grid Size Input Error", """
-                The inputted grid size is invalid.
-                Only integers and blank entries are permitted.
-                Would you like to use auto sizing instead?""");
+    @FXML
+    private void editFileClick(){
+        Optional<String> tryFile = DialogService.filePicker(getWindow());
+        if (tryFile.isEmpty()){
+            DialogService.fileNotFoundError(" ");
+            return;
+        }
+        String filePath = tryFile.get();
+        fileLocationText.setText(filePath);
     }
 }
