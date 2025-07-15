@@ -11,11 +11,6 @@ import java.util.Optional;
 
 public class FileHandling {
 
-    /* TODO:
-    * Create a new method called saveFile
-    *   - this method will handle the saving of the puzzle to the selected file.
-    * */
-
     public static boolean openFile(String filePath){
         File file = new File(filePath);
         Desktop desktop = Desktop.getDesktop();
@@ -47,13 +42,13 @@ public class FileHandling {
         return true;
     }
 
-    public static Optional<Boolean> saveFile(String filePath, char [][] puzzle, char[][] solution, ArrayList<String> wordList){
+    public static Optional<Boolean> saveFile(String filePath, char [][] puzzle, char[][] solution, ArrayList<String> wordList, String sheetName){
         File file = new File(filePath);
         if (!file.exists()){
             return Optional.of(true);
         }
 
-        Optional<Workbook> workbookTry = Excel.addPuzzle(puzzle, solution, wordList, file);
+        Optional<Workbook> workbookTry = Excel.addPuzzle(puzzle, solution, wordList, sheetName, file);
         if (workbookTry.isEmpty()){
             return Optional.of(false);
         }

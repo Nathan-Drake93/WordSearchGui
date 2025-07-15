@@ -28,13 +28,6 @@ public class GuiHandle {
     @FXML
     private TextField sheetName;
     @FXML
-    private Button createButton;
-    @FXML
-    private Button openFile;
-    @FXML
-    private Button newFile;
-    @FXML
-    private Button editFile;
 
     private Window getWindow(){
         return anchorPane.getScene().getWindow();
@@ -89,7 +82,7 @@ public class GuiHandle {
         PuzzleGenerator.fillGrid(puzzle);
 
         words.sort(null);
-        Optional<Boolean> saveTry = FileHandling.saveFile(fileLocationText.getText(), puzzle, solution, words);
+        Optional<Boolean> saveTry = FileHandling.saveFile(fileLocationText.getText(), puzzle, solution, words, sheetName.getText());
         if (saveTry.isPresent()){
             boolean error = saveTry.get();
             if (error){
